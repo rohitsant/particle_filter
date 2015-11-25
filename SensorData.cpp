@@ -13,7 +13,7 @@ void SensorData::read_data(char* fileName)
 	logFile.open(fileName, std::ios::in);
 	if(!logFile){
 		std::cout << "Can't open the log file"<< logFile << std::endl;
-		exit(1);
+		return;
 	}
 	float temp_value;
 	std::vector<float> odom_pose_vector;

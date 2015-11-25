@@ -52,8 +52,8 @@ std::vector<particle*>* particle_filter(map* map_data, std::vector< particle* >*
 		new_particle->set_theta((*iter_particles)->get_theta() + (*odom_t)[2]);
 		temp_particles->push_back(new_particle);
 		
-		debug_count++;
-		std::cout<<"New particle count "<< debug_count << std::endl;
+		// debug_count++;
+		// std::cout<<"New particle count "<< debug_count << std::endl;
 
 	}
 
@@ -65,11 +65,11 @@ std::vector<particle*>* particle_filter(map* map_data, std::vector< particle* >*
 		for (std::vector<particle*>::iterator iter_particles = X_prev->begin(); iter_particles != X_prev->end(); iter_particles++)
 		{
 			
-			std::cout<<"No error here pls 1: "<<debug_count << std::endl;
+			//std::cout<<"No error here pls 1: "<<debug_count << std::endl;
 			debug_count++;
 			delete(*iter_particles);
 		}
-		std::cout<<"No error here pls 2"<<std::endl;
+		//std::cout<<"No error here pls 2"<<std::endl;
 		X_prev->clear();
 		
 		//Set new particles as temp particles
@@ -77,16 +77,16 @@ std::vector<particle*>* particle_filter(map* map_data, std::vector< particle* >*
 		{
 			X_prev->push_back((*temp_particles)[i]);
 		}
-		std::cout<<"No error here pls 3"<<std::endl;
+		//std::cout<<"No error here pls 3"<<std::endl;
 		temp_particles->clear();
 		delete(temp_particles);
 		return X_prev;
 	}
 	//Else there is a laser reading
 	//Calculate weights
-	weights.clear();
+	//weights.clear();
 	
-	std::cout<<"Weights cleared."<<std::endl;
+	// std::cout<<"Weights cleared."<<std::endl;
 	
 	for (std::vector<particle*>::iterator iter_particles = X_prev->begin(); iter_particles != X_prev->end(); iter_particles++)
 	{
@@ -112,13 +112,12 @@ std::vector<particle*>* particle_filter(map* map_data, std::vector< particle* >*
 	for (int i=0; i<num_particles; i++)
 	{
 		random_pick = (*weight_dist)(generator);
-		std::cout << "Random choice = " << random_pick << std::endl;
+		//std::cout << "Random choice = " << random_pick << std::endl;
 		X_prev->push_back((*temp_particles)[random_pick]);
 	}
-	temp_particles->clear();
+	//temp_particles->clear();
 	delete(temp_particles);
 	delete(weight_dist);
-	std::cout << "Size = " << X_prev->size() << std::endl;
 	return X_prev;
 
 }

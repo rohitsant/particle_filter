@@ -1,9 +1,9 @@
 #include "map.h"
 #include "SensorData.h"
 #include "particle_filter.h"
-#include "matplotlibcpp.h"
+//#include "matplotlibcpp.h"
 #include <stdio.h>
-
+#include <cmath>
 #define PI 3.1415926
 
 int num_particles = 5120;
@@ -24,7 +24,7 @@ int main()
 	std::cout<<"Map Read."<<std::endl;
 	//Read sensor data
 	SensorData* laser_obj = new SensorData;
-	char* laserLog = "log/robotdata1.log";
+	char* laserLog = "log/robotdata2.log";
 	laser_obj->read_data(laserLog);
 	//laser_obj->print_data();
 	std::cout<<"Sensor Data got."<<std::endl;
@@ -42,7 +42,7 @@ int main()
 				particle* new_particle = new particle((float)x,(float)y, theta_delta[j]);
 				particles->push_back(new_particle);
 			}
-	std::cout<<"Particles Initialized."<<std::endl;
+	
 	//Preprocess odometry and sensor data
 	std::vector<char>* ordering = laser_obj->get_ordering();
 	std::vector<float>* cur_odom = new std::vector<float>;
@@ -55,43 +55,38 @@ int main()
 		std::cout << "T = " << t << std::endl;
 		//Calculate the odometry
 		cur_odom->clear();
-		std::cout<<"Cur odom Cleared"<<std::endl;
+
 		for (int i = 0; i < 3; i++)
 			cur_odom->push_back((*(laser_obj->get_odom_data()))[t][i] - (*(laser_obj->get_odom_data()))[t-1][i]);
-		std::cout<<"New cur odom done"<<std::endl;
+		
 
 		if ((*ordering)[t] == 'O')
 		{
 			no_laser = true;
 
 			//No need to change laser data
-			std::cout<<"Entered Odometry step"<<std::endl;
+			// std::cout<<"Entered Odometry step"<<std::endl;
 			particles = particle_filter(map_obj, particles, cur_odom, cur_laser, &(*(laser_obj->get_laser_relative_pose()))[laser_iter], laser_variance, no_laser, map_obj->get_size_x(), map_obj->get_size_y());
 			no_laser = false;
-			std::cout<<"Odometry step."<<std::endl;
+			// std::cout<<"Odometry step."<<std::endl;
 		}
 		else if((*ordering)[t] == 'L')
 		{
 			laser_iter++;
 			cur_laser = &(*(laser_obj->get_laser_scan()))[laser_iter];
 			particles = particle_filter(map_obj, particles, cur_odom, cur_laser, &(*(laser_obj->get_laser_relative_pose()))[laser_iter], laser_variance, no_laser, map_obj->get_size_x(), map_obj->get_size_y());
-			std::cout<<"Laser step."<<std::endl;
+			// std::cout<<"Laser step."<<std::endl;
 		}
 	
 	}
 	for (std::vector<particle*>::iterator iter_particles = particles->begin(); iter_particles != particles->end(); iter_particles++)
 	{
-		std::cout<<"About to free"<<std::endl;
 		delete(*iter_particles);
-		std::cout<<"Freed individual particles."<<std::endl;
 	}
 	
 	particles->clear();
-	std::cout<<"Cleared particles vector."<<std::endl;
 	delete(particles);
-	std::cout<<"Deleted particles vector."<<std::endl;
 	delete(cur_odom);
-	std::cout<<"Deleted odom vector."<<std::endl;
 	
 	return 0;
 }

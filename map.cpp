@@ -1,5 +1,6 @@
 #include "map.h"
 #include <stdio.h>
+#include <cstring>
 
 void map::map_print()
 {
