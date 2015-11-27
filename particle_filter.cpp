@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #define PI 3.14159265
-#define num_particles_exploitation 500
+#define num_particles_exploitation 1000
 
 
 float compute_weight(map* map_data, particle* current_particle, std::vector<int>* laser_observation_t, std::vector<float>* laser_relative_pose_t, float laser_variance, int size_x, int size_y)

@@ -5,7 +5,7 @@
 #include <vector>
 #include <fstream>
 
-void SensorData::read_data(char* fileName)
+void SensorData::read_data(const char* fileName)
 {
 	std::ifstream logFile;
 	char data_type;

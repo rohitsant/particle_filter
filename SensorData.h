@@ -19,7 +19,7 @@ private:
  
 public:
 	~SensorData();
-	void read_data(char* fileName);
+	void read_data(const char* fileName);
 	void print_data();
 	std::vector< std::vector<int> >* get_laser_scan(){return &laser_scan;};
 	std::vector< std::vector<float> >* get_laser_relative_pose(){return &laser_relative_pose;};

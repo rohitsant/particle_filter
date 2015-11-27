@@ -4,10 +4,11 @@
 #include "matplotlibcpp.h"
 #include <stdio.h>
 #include <random>
+#include <string>
 
 #define PI 3.1415926
-#define num_particles 25000
-#define num_particles_exploitation 500
+#define num_particles 50000
+#define num_particles_exploitation 1000
 
 float laser_variance = 0.1;
 
@@ -29,9 +30,14 @@ int main()
 	//map_obj->map_print();
 	std::cout<<"Map Read."<<std::endl;
 	//Read sensor data
+
 	SensorData* laser_obj = new SensorData;
-	char* laserLog = "log/robotdata1.log";
+	std::string logName = "robotdata1";
+	std::string logFile = "log/" + logName + ".log";
+	const char* laserLog = logFile.c_str();
 	laser_obj->read_data(laserLog);
+	char imgID[8];
+
 	//laser_obj->print_data();
 	std::cout<<"Sensor Data got."<<std::endl;
 	//Initialize particles
@@ -93,6 +99,8 @@ int main()
 
 	for (int t = 1; t< ordering->size(); t++)
 	{
+		//plot stuff
+
 		std::cout << "T = " << t << std::endl;
 		//Calculate the odometry
 		cur_odom->clear();
@@ -124,7 +132,7 @@ int main()
 			start_exploitation = true;
 
 		//Plotting
-		if (t%100 == 0)
+		if (t%5 == 0)
 		{	
 			plot_x.clear();
 			plot_y.clear();
@@ -144,9 +152,12 @@ int main()
 					plot_y.push_back((*particles)[i]->get_y());
 				}
 			}
+			sprintf( imgID, "%08d",t);
+			const std::string fileName = "results/" + logName + "/" + imgID + ".png";
 			plt::plot(wall_x, wall_y, "k*");
 			plt::plot(plot_x, plot_y, "r.");
-			plt::show();
+			plt::save(fileName);
+			plt::close();
 
 		}	
 	}
