@@ -24,6 +24,7 @@ namespace matplotlibcpp {
 			PyObject *s_python_function_xlim;
 			PyObject *s_python_function_ylim;
 			PyObject *s_python_empty_tuple;
+			PyObject *s_python_function_close;
 
 			/* For now, _interpreter is implemented as a singleton since its currently not possible to have
 			   multiple independent embedded python interpreters without patching the python source code
@@ -61,8 +62,10 @@ namespace matplotlibcpp {
 				s_python_function_legend = PyObject_GetAttrString(pymod, "legend");
 				s_python_function_ylim = PyObject_GetAttrString(pymod, "ylim");
 				s_python_function_xlim = PyObject_GetAttrString(pymod, "xlim");
+				s_python_function_close = PyObject_GetAttrString(pymod, "close");
+			
 
-				s_python_function_save = PyObject_GetAttrString(pylabmod, "savefig");
+				s_python_function_save = PyObject_GetAttrString(pymod, "savefig");
 
 				if(!s_python_function_show 
 						|| !s_python_function_save
@@ -70,7 +73,8 @@ namespace matplotlibcpp {
 						|| !s_python_function_plot 
 						|| !s_python_function_legend
 						|| !s_python_function_xlim
-						|| !s_python_function_ylim) 
+						|| !s_python_function_ylim
+						|| !s_python_function_close) 
 				{ throw std::runtime_error("Couldnt find required function!"); }
 
 				if(!PyFunction_Check(s_python_function_show)
@@ -79,7 +83,8 @@ namespace matplotlibcpp {
 					|| !PyFunction_Check(s_python_function_plot)
 					|| !PyFunction_Check(s_python_function_legend)
 					|| !PyFunction_Check(s_python_function_xlim)
-					|| !PyFunction_Check(s_python_function_ylim)) 
+					|| !PyFunction_Check(s_python_function_ylim)
+					|| !PyFunction_Check(s_python_function_close)) 
 				{ throw std::runtime_error("Python object is unexpectedly not a PyFunction."); }
 
 				s_python_empty_tuple = PyTuple_New(0);
@@ -252,6 +257,14 @@ namespace matplotlibcpp {
 		Py_DECREF(res);
 	}
 
+	inline void close()
+	{
+		PyObject* res = PyObject_CallObject(detail::_interpreter::get().s_python_function_close, detail::_interpreter::get().s_python_empty_tuple);
+		if(!res) throw std::runtime_error("Call to close() failed.");
+
+		Py_DECREF(res);
+	}
+
 	inline void save(const std::string& filename)
 	{
 		PyObject* pyfilename = PyString_FromString(filename.c_str());
@@ -262,7 +275,7 @@ namespace matplotlibcpp {
 		PyObject* res = PyObject_CallObject(detail::_interpreter::get().s_python_function_save, args);
 		if(!res) throw std::runtime_error("Call to save() failed.");
 
-		Py_DECREF(pyfilename);
+	//	Py_DECREF(pyfilename);
 		Py_DECREF(args);
 		Py_DECREF(res);
 	}
