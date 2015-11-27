@@ -14,7 +14,7 @@ private:
 public:
 	particle(){x= -1; y = -1; theta = -1;};
 	particle(float new_x, float new_y, float new_theta){x = new_x; y = new_y; theta = new_theta;};
-	~particle();
+	~particle(){};
 	float get_x(){ return x;};
 	void set_x(float new_x){x = new_x;};
 	float get_y(){ return y;};
@@ -24,6 +24,6 @@ public:
 
 };
 
-std::vector<particle*>* particle_filter(map*, std::vector< particle* >* , std::vector<float>* , std::vector<int>* laser_observation_t, std::vector<float>* , float );
+std::vector<particle*>* particle_filter(map*, std::vector< particle* >* , std::vector<float>* , std::vector<int>* , std::vector<float>* , float, bool, int, int, int*, bool );
 
 #endif

@@ -12,14 +12,14 @@ void SensorData::read_data(char* fileName)
 
 	logFile.open(fileName, std::ios::in);
 	if(!logFile){
-		std::cout << "Can't open the log file"<< logFile << std::endl;
+		std::cout << "Can't open the log file" << logFile << std::endl;
 		exit(1);
 	}
 	float temp_value;
 	std::vector<float> odom_pose_vector;
 	std::vector<int> scan_line;
 	std::vector<float> robot_pose_vector;
-	std::vector<float> laser_pose_vector;
+	std::vector<float> laser_relative_pose_vector;
 	
 
 	while(logFile >> data_type)
@@ -45,7 +45,7 @@ void SensorData::read_data(char* fileName)
 			ordering.push_back(data_type);
 			scan_line.clear();
 			robot_pose_vector.clear();
-			laser_pose_vector.clear();
+			laser_relative_pose_vector.clear();
 			
 			for (int i = 0; i<3; i++)
 			{
@@ -53,14 +53,15 @@ void SensorData::read_data(char* fileName)
 				logFile >> temp_value;
 				robot_pose_vector.push_back(temp_value);
 			}
-			robot_pose.push_back(robot_pose_vector);
+			odom_data.push_back(robot_pose_vector);
 			for (int i = 0; i<3; i++)
 			{
 				
 				logFile >> temp_value;
-				laser_pose_vector.push_back(temp_value);
+				temp_value -= robot_pose_vector[i];
+				laser_relative_pose_vector.push_back(temp_value);
 			}
-			laser_pose.push_back(laser_pose_vector);
+			laser_relative_pose.push_back(laser_relative_pose_vector);
 			
 			float cur_value;
 			while(logFile.peek() != '\n')
@@ -68,7 +69,7 @@ void SensorData::read_data(char* fileName)
 				logFile >> cur_value;
 				scan_line.push_back((int)cur_value);
 			}
-			laser_pose_stamps.push_back(cur_value);
+			laser_relative_pose_stamps.push_back(cur_value);
 			scan_line.pop_back();
 			laser_scan.push_back(scan_line);
 			logFile.ignore(2, '\n');
